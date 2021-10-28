@@ -1,0 +1,103 @@
+/* Covid-19 Analyse Project by SQL 
+Project as preperation to be analysed by Tableau as next step
+By: Mohd Zyd
+28/10/2021
+Source Data : https://ourworldindata.org/covid-deaths
+*/
+
+--Clening Null Data in continent
+Select * 
+FROM Covid_19_v1.covid_vaccinated
+Where continent !=""
+order by 3,4
+
+--Total Cases vs Total deaths percentage
+Select location,date,total_cases,total_deaths,(cast(total_deaths AS DOUBLE) / CAST(total_cases as double))*100  as death_percentage_percentage
+FROM Covid_19_v1.covid_vaccinated
+order by 2 
+
+--Total cases vs Population percentage
+Select location,date,total_cases,population,(cast(total_cases AS DOUBLE) /CAST(population AS DOUBLE))*100  as cases_percentage_population
+FROM Covid_19_v1.covid_vaccinated
+Where continent !=""
+order by 2  DESC
+
+--Highiset cases rate compared to population
+Select location,MAX(cast(total_cases AS DOUBLE)), population ,MAX((cast(total_cases AS DOUBLE) / CAST(population AS DOUBLE)))*100  as cases_percentage_population
+FROM Covid_19_v1.covid_vaccinated
+Where continent !=""
+group by location,population
+order by 2 DESC 
+
+
+--Highiset death rate compared to population
+Select location,MAX(cast(total_deaths AS DOUBLE)), population ,MAX((cast(total_deaths AS DOUBLE) / population))*100  as deaths_percentage_population
+FROM Covid_19_v1.covid_death
+Where continent !=""
+group by location,population
+order by 4 DESC 
+
+--Total cases vs deaths per country
+Select location,sum(cast(new_deaths AS DOUBLE)), sum(CAST(new_cases AS DOUBLE)), (sum(cast(new_deaths AS DOUBLE))/sum(CAST(new_cases AS DOUBLE)))*100 AS Death_Percentage
+FROM Covid_19_v1.covid_death
+Where continent !=""
+group by location
+order by 4 DESC 
+
+--Total smokers cases percentage
+SELECT sum(CAST(new_cases AS DOUBLE)) , sum(CAST(female_smokers AS DOUBLE))+Sum(CAST(male_smokers AS DOUBLE)) AS total_smokers , ((sum(CAST(female_smokers AS DOUBLE))+Sum(CAST(male_smokers AS DOUBLE)))/sum(CAST(new_cases AS DOUBLE)))*100 AS smoker_percentage_cases
+FROM Covid_19_v1.covid_death
+
+--Total smokers death  percentage
+SELECT sum(CAST(new_deaths AS DOUBLE)) , sum(CAST(female_smokers AS DOUBLE))+Sum(CAST(male_smokers AS DOUBLE)) AS total_smokers , ((sum(CAST(female_smokers AS DOUBLE))+Sum(CAST(male_smokers AS DOUBLE)))/sum(CAST(new_deaths AS DOUBLE)))*100 AS smoker_percentage_deaths
+FROM Covid_19_v1.covid_death
+
+--Total diabetes cases percentage
+SELECT sum(CAST(new_cases AS DOUBLE)) , sum(CAST(diabetes_prevalence AS DOUBLE)) , (sum(CAST(diabetes_prevalence AS DOUBLE))/sum(CAST(new_cases AS DOUBLE)))*100 AS diabetes_percentage_cases
+FROM Covid_19_v1.covid_death
+
+--Total diabetes death  percentage
+SELECT sum(CAST(new_deaths AS DOUBLE)) , sum(CAST(diabetes_prevalence AS DOUBLE)) , (sum(CAST(diabetes_prevalence AS DOUBLE))/sum(CAST(new_deaths AS DOUBLE)))*100 AS diabetes_percentage_deaths
+FROM Covid_19_v1.covid_death
+
+--Total cases and deaths per contenent
+Select continent,sum(CAST(new_deaths AS DOUBLE)), sum(CAST(new_cases AS DOUBLE)), (sum(CAST(new_deaths AS DOUBLE))/sum(CAST(new_cases AS DOUBLE)))*100 AS Death_Percentage
+FROM Covid_19_v1.covid_death
+Where continent !=""
+group by continent
+order by 2 DESC 
+
+--Total cases and deaths By time
+Select date,sum(CAST(new_deaths AS DOUBLE)), sum(CAST(new_cases AS DOUBLE)), (sum(CAST(new_deaths AS DOUBLE))/sum(CAST(new_cases AS DOUBLE)))*100 AS Death_Percentage
+FROM Covid_19_v1.covid_death
+Where continent !=""
+group by date
+order by 1 DESC 
+
+--Total vaccenated vs deaths by time
+Select date,sum(CAST(new_deaths AS DOUBLE)), sum(CAST(new_vaccinations AS DOUBLE)), (sum(CAST(new_deaths AS DOUBLE))/sum(CAST(new_vaccinations AS DOUBLE)))*100 AS Death_Percentage
+FROM Covid_19_v1.covid_vaccinated
+Where continent !=""
+group by date
+order by 1 DESC 
+
+--Total vaccenated vs cases by time
+Select date,sum(CAST(new_cases AS DOUBLE)), sum(CAST(new_vaccinations AS DOUBLE)), (sum(CAST(new_cases AS DOUBLE))/sum(CAST(new_vaccinations AS DOUBLE)))*100 AS Death_Percentage
+FROM Covid_19_v1.covid_vaccinated
+Where continent !=""
+group by date
+order by 1 DESC 
+
+--Total cvaccinated vs cases vs deaths per country
+Select location,sum(CAST(new_deaths AS DOUBLE)), sum(CAST(new_cases AS DOUBLE)), sum(CAST(new_vaccinations AS DOUBLE))
+FROM Covid_19_v1.covid_vaccinated
+Where continent !=""
+group by location
+order by 4 DESC 
+
+--Total cvaccinated vs cases vs deaths per continent
+Select continent,sum(CAST(new_deaths AS DOUBLE)), sum(CAST(new_cases AS DOUBLE)), sum(CAST(new_vaccinations AS DOUBLE))
+FROM Covid_19_v1.covid_vaccinated
+Where continent !=""
+group by continent
+order by 4 DESC 
